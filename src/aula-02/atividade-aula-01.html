@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulário</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="alert alert-primary mt-3" role="alert" id="mensagem">
+        Hello World
+      </div>
+      <form>
+        <div class="form-group">
+          <label for="pedido">Pedido</label>
+          <input
+            class="form-control"
+            type="text"
+            name="pedido"
+            id="pedido"
+            value="teste"
+          />
+        </div>
+        <div class="form-group">
+          <label for="data">Data</label>
+          <input class="form-control" id="data" type="date" name="data" />
+        </div>
+        <div class="form-group">
+          <label for="valor">Valor</label>
+          <input class="form-control" type="number" name="valor" id="valor" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input class="form-control" type="email" name="email" id="email" />
+        </div>
+        <div class="form-group">
+          <label for="previsao">Previsão entrega</label>
+          <input
+            class="form-control"
+            type="time"
+            name="previsao"
+            id="previsao"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+
+      <div class="row mt-5">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Pedido</th>
+              <th scope="col">Data</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Email</th>
+              <th scope="col">Previsão</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="teste(event)">
+        TESTE
+      </button>
+    </div>
+
+    <script>
+      //   window.onload = function () {
+      //     console.log("carregou");
+      //   };
+      //   document
+      //     .getElementById("mensagem")
+      //     .addEventListener("mouseover", (evento) => {
+      //       evento.target.textContent = "Mouse está sobre mim!";
+      //     });
+
+      //   document
+      //     .getElementById("mensagem")
+      //     .addEventListener("mouseout", (evento) => {
+      //       evento.target.textContent = "Mouse saiu de cima mim!";
+      //     });
+
+      //   document.getElementById("pedido").addEventListener("input", (evento) => {
+      //     console.log(evento.target.value);
+      //   });
+
+      //   document.getElementById("pedido").addEventListener("focus", (evento) => {
+      //     console.log("focus", evento.target.value);
+      //   });
+
+      //   document.getElementById("pedido").addEventListener("", (evento) => {
+      //     console.log("blur", evento.target.value);
+      //   });
+
+      const teste = (event) => {
+        event.target.classList.toggle("btn-primary");
+      };
+
+      const VALOR_PEDIDO_MINIMO = 10;
+      const PREVISAO_PEDIDO_MINUTO_MINIMO = 30;
+
+      let PEDIDOS_QTD = 0;
+
+      const PEDIDO_DEFAULT = {
+        pedido: "",
+        data: "",
+        valor: 0,
+        email: "",
+        previsao: "",
+      };
+
+      class ErroFormulario extends Error {
+        constructor(mensagem, input, valor) {
+          super(mensagem);
+          this.message = mensagem;
+          this.name = "ErroFormulario";
+          this.input = input;
+          this.valor = valor;
+        }
+      }
+      const formulario = document.forms[0];
+      const mensagemDiv = document.querySelector("#mensagem");
+      const tbody = document.querySelector("table > tbody");
+
+      const addLinha = (pedido = PEDIDO_DEFAULT) => {
+        const linha = document.createElement("tr");
+        const idLinha = document.createElement("th");
+        idLinha.setAttribute("scope", "row");
+        idLinha.textContent = PEDIDOS_QTD + 1;
+        linha.appendChild(idLinha);
+        Object.keys(pedido).forEach((chave) => {
+          const coluna = document.createElement("td");
+          coluna.textContent = pedido[chave];
+          linha.appendChild(coluna);
+        });
+
+        tbody.appendChild(linha);
+        PEDIDOS_QTD++;
+      };
+
+      const validarVazio = (valor = "") => {
+        return !!valor.trim();
+      };
+
+      const validarData = (valor = new Date()) => {
+        const diaDehoje = new Date().getDate();
+        const mesDehoje = new Date().getMonth();
+
+        const diaValor = valor.getUTCDate();
+        const mesValor = valor.getUTCMonth();
+
+        // console.log("validarData", {
+        //   diaDehoje,
+        //   mesDehoje,
+        //   diaValor,
+        //   mesValor,
+        //   valor,
+        //   teste: valor.getUTCDate(),
+        // });
+
+        const mesValido = mesValor >= mesDehoje;
+
+        const diaValido = mesValido && diaValor >= diaDehoje;
+        return mesValido && diaValido;
+      };
+
+      const validarHorario = (valor = "") => {
+        const [horaValor, minutoValor] = valor.split(":");
+        const hoje = new Date();
+        hoje.setMinutes(hoje.getMinutes() + PREVISAO_PEDIDO_MINUTO_MINIMO);
+        const valorRecebido = new Date();
+        valorRecebido.setHours(horaValor);
+        valorRecebido.setMinutes(minutoValor);
+
+        return valorRecebido >= hoje;
+      };
+
+      const validarValor = (valor = 0) => {
+        return valor > VALOR_PEDIDO_MINIMO;
+      };
+
+      const validarEmail = (valor = "") => {
+        return /^[\w.+\-]+@gmail\.com$/.test(valor);
+      };
+
+      const validar = (input, valor) => {
+        if (input === "pedido" && !validarVazio(valor))
+          throw new ErroFormulario("Pedido inválido", input, valor);
+
+        if (input === "data" && !validarData(new Date(valor)))
+          throw new ErroFormulario("Data inválida", input, valor);
+
+        if (input === "valor" && !validarValor(valor))
+          throw new ErroFormulario("Valor inválido", input, valor);
+
+        if (input === "email" && !validarEmail(valor))
+          throw new ErroFormulario("Email inválido", input, valor);
+
+        if (input === "previsao" && !validarHorario(valor))
+          throw new ErroFormulario("Previsão inválida", input, valor);
+      };
+
+      const feedback = (mensagem, classe = "alert-danger") => {
+        mensagemDiv.textContent = mensagem;
+        if (classe != "alert-danger") {
+          mensagemDiv.classList.remove("alert-danger");
+        }
+
+        mensagemDiv.classList.add(classe);
+      };
+
+      formulario.addEventListener("submit", (evento) => {
+        evento.preventDefault();
+        const validacoes = ["pedido", "data", "valor", "email", "previsao"];
+        const pedido = {};
+
+        try {
+          validacoes.forEach((input) => {
+            const valorInput = formulario[input].value;
+            validar(input, valorInput);
+            Object.assign(pedido, {
+              [input]: formulario[input].value,
+            });
+          });
+          addLinha(pedido);
+          feedback("Sucesso", "alert-success");
+        } catch (error) {
+          if (error instanceof ErroFormulario) {
+            feedback(`Erro: ${error.message}`);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
