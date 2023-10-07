@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "aula3:1": "node src/aula-03/fluxo-processo.js",
+    "aula3:2": "node src/aula-03/leitura-escrita.js"
   },
   "keywords": [],
   "author": "",

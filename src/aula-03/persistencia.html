@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Persistência</title>
+  </head>
+  <body>
+    <input type="text" id="conteudo" />
+    <button onclick="persistir2()">Salvar</button>
+    <button onclick="sessionStorage.removeItem('valorDigitado')">
+      Deletar
+    </button>
+
+    <button onclick="alert(sessionStorage.getItem('valorDigitado'))">
+      Ver
+    </button>
+
+    <script>
+      const id2 = "opa";
+      const persistir = () => {
+        const { value: valorDigitado } = document.getElementById("conteudo");
+        localStorage.setItem("valorDigitado", String(valorDigitado));
+      };
+
+      const persistir2 = () => {
+        const { value: valorDigitado } = document.getElementById("conteudo");
+        sessionStorage.setItem("valorDigitado", String(valorDigitado));
+      };
+    </script>
+  </body>
+</html>
