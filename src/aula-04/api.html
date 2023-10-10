@@ -25,7 +25,15 @@
       };
       const buscar = (palavra, tipo) => {
         document.querySelector("p").textContent = "carregando...";
-        fetch(`https://jsonplaceholder.typicode.com/posts`)
+        fetch(`https://jsonplaceholder.typicode.com/postss`)
+          .then((resposta) => {
+            console.log("resposta.status", resposta.status);
+            if (resposta.status < 200 || resposta.status > 300) {
+              alert("request com problema");
+            }
+
+            return resposta;
+          })
           .then((resposta) => resposta.json())
           .then((respostaFormatada) => {
             document.querySelector("pre").innerHTML = respostaFormatada;
