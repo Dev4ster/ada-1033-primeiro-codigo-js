@@ -21,3 +21,5 @@ Requisitos:
 8. Estilize a interface para torná-la mais atraente (boostrap).
 
 9. Mostre um ícone de carregamento ou uma mensagem de "Carregando..." enquanto aguarda a resposta da API.
+
+Link para envio: https://forms.gle/aCJVVKiQnoZ9dLqY6
