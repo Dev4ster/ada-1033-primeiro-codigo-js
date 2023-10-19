@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHAT</title>
+
+    <style>
+      main {
+        display: flex;
+        flex-direction: column;
+      }
+
+      section {
+        flex: 1;
+        min-height: 300px;
+        max-height: 300px;
+        overflow-y: scroll;
+        border: 3px solid red;
+      }
+
+      section div {
+        border: 1px solid #000;
+        border-radius: 4px;
+      }
+
+      section div + div {
+        margin-top: 4px;
+      }
+
+      form {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="chat"></section>
+      <form>
+        <input type="text" id="username" required value="Caneta Azul" />
+        <textarea id="msg"></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+    </main>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+      import {
+        getFirestore,
+        getDocs,
+        collection,
+        onSnapshot,
+        doc,
+        query,
+        addDoc,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCycYZU_koUgjCKP3EFfvPyzNV_4Pb8r5I",
+        authDomain: "ada-1033-chat.firebaseapp.com",
+        projectId: "ada-1033-chat",
+        storageBucket: "ada-1033-chat.appspot.com",
+        messagingSenderId: "324983953565",
+        appId: "1:324983953565:web:d56d1804328f49330cdc74",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      const form = document.forms[0];
+
+      (async () => {
+        const db = getFirestore(app);
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const msg = document.getElementById("msg").value;
+          const username = document.getElementById("username").value;
+          const time = new Date().getTime();
+          const docRef = await addDoc(collection(db, "mensagens"), {
+            msg,
+            username,
+            time,
+          });
+        });
+
+        function messages(message) {
+          const msg = document.createElement("div");
+          msg.innerHTML = `
+                <small>${message.username}</small> <p>${message.msg}</p>
+            `;
+          document.getElementById("chat").appendChild(msg);
+        }
+
+        async function init() {
+          //   const querySnapshot = await getDocs(collection(db, "mensagens"));
+          //   querySnapshot.forEach((doc) => console.log(doc.data()));
+          const unsub = onSnapshot(
+            query(collection(db, "mensagens"), orderBy("time", "desc")),
+            (querySnapshot) => {
+              document.getElementById("chat").innerHTML = "";
+              querySnapshot.forEach((doc) => {
+                const message = doc.data();
+                messages({
+                  id: doc.id,
+                  ...message,
+                });
+              });
+            }
+          );
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>

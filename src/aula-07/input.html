@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    h1:hover {
+      color: blue;
+    }
+  </style>
+  <body>
+    <div id="linha">
+      <h1>Oi</h1>
+    </div>
+
+    <script>
+      const h1 = document.querySelector("h1");
+      h1.addEventListener("click", (e) => {
+        const input = document.createElement("input");
+        e.target.style.display = "none";
+        input.setAttribute("type", "text");
+        input.setAttribute("value", e.target.innerText);
+        input.onchange = (e) => {
+          h1.textContent = e.target.value;
+          input.remove();
+          h1.style.display = "block";
+        };
+
+        input.onblur = (e) => {
+          h1.textContent = e.target.value;
+          input.remove();
+          h1.style.display = "block";
+        };
+        document.querySelector("#linha").appendChild(input);
+      });
+    </script>
+  </body>
+</html>
